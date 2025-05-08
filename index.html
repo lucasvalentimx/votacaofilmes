@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vote no Filme</title>
+  <style>
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #111; color: #fff; }
+    header { background-color: #000; padding: 20px; text-align: center; font-size: 28px; font-weight: bold; border-bottom: 2px solid #444; }
+    .container { display: flex; flex-wrap: wrap; justify-content: center; padding: 20px; gap: 20px; }
+    .card { background-color: #1c1c1c; border-radius: 10px; padding: 20px; width: 300px; box-shadow: 0 0 10px rgba(255,255,255,0.1); transition: transform 0.3s; text-align: center; }
+    .card:hover { transform: scale(1.02); }
+    .card img { width: 100%; border-radius: 10px; }
+    .card h2 { font-size: 20px; margin-top: 10px; }
+    .card p { font-size: 15px; color: #ccc; }
+    .card button { background-color: #e50914; color: white; border: none; padding: 10px 15px; font-size: 14px; border-radius: 5px; cursor: pointer; margin: 5px;}
+    .card button:disabled { background-color: #444; cursor: default; }
+    .votes { margin-top: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <header>Qual filme você quer ver primeiro?</header>
+  <div class="container" id="movies-container"></div>
+  <script>
+    const movies = [
+      { title: "Um Lugar Silencioso: Dia Um", img: "https://m.media-amazon.com/images/I/51LR2nKhxxL._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=lml3mW-FGLc" },
+      { title: "O Regresso", img: "https://m.media-amazon.com/images/I/81w26RqaV5L._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=S4PpYv9n0ko" },
+      { title: "Guerra Mundial Z", img: "https://m.media-amazon.com/images/I/91rJEx-cYdL._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=Itc3k-Fc9Ls" },
+      { title: "Alien: Rômulos", img: "https://m.media-amazon.com/images/I/91yYfrwVfhL._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=x8RmqOusF14" },
+      { title: "Aquaman 1 e 2", img: "https://m.media-amazon.com/images/I/71PffIYmZmL._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=yJnzCBt5j1M" },
+      { title: "127 Horas", img: "https://m.media-amazon.com/images/I/91IuHqH7TQL._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=SHQxpg4Lidg" },
+      { title: "O Grande Herói", img: "https://m.media-amazon.com/images/I/91-ptVGoY2L._AC_SY679_.jpg", trailer: "https://www.youtube.com/watch?v=rPBjB65NV_c" }
+    ];
+    const container = document.getElementById("movies-container");
+    movies.forEach((movie, index) => {
+      const voteKey = `votes_${index}`;
+      const votedKey = `voted_${index}`;
+      let votes = localStorage.getItem(voteKey) || 0;
+      let voted = localStorage.getItem(votedKey);
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <img src="${movie.img}" alt="${movie.title}">
+        <h2>${movie.title}</h2>
+        <button onclick="window.open('${movie.trailer}', '_blank')">Assistir Trailer</button>
+        <button ${voted ? "disabled" : ""}>Quero ver!</button>
+        <div class="votes">Votos: <span id="vote-count-${index}">${votes}</span></div>
+      `;
+      const voteBtn = card.querySelector("button:nth-of-type(2)");
+      voteBtn.addEventListener("click", () => {
+        if (!localStorage.getItem(votedKey)) {
+          votes++;
+          localStorage.setItem(voteKey, votes);
+          localStorage.setItem(votedKey, true);
+          document.getElementById(`vote-count-${index}`).innerText = votes;
+          voteBtn.disabled = true;
+        }
+      });
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>
